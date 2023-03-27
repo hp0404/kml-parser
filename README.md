@@ -25,7 +25,7 @@ This is useful when the KML file you are parsing has fields with different names
 
 Also, note that only the keys mentioned will be included if you provide the mapping, e.g. {"name": "region", "folder": "building_type"} will only return those, discarding the default "placemark", "address", and "description" keys.
 
-```
+```python
 >>> from pathlib import Path
 >>> from kmlparser import KMLParser
 >>> input_path = Path("sample.kml").resolve()
@@ -37,9 +37,14 @@ Also, note that only the keys mentioned will be included if you provide the mapp
 ## Development
 
 To contribute to this tool, first checkout the code. Then create a new virtual environment:
+```console
+cd kmlparser
+python -m venv env
+source env/bin/activate
+```
 
-    cd apple-notes-to-sqlite
-    python -m venv venv
-    source venv/bin/activate
+Now install the dependencies:
 
-Now install the dependencies and test dependencies:
+```console
+pip install -e ".[testing]"
+```
