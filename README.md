@@ -3,10 +3,20 @@
 A library for parsing KML files.
 
 ## Installation
-Install this tool using poetry:
+
+To use this tool, first checkout the code. Then create a new virtual environment:
+```
+cd kmlparser
+python -m venv env
+source env/bin/activate
+```
+
+Now install the dependencies:
 
 ```console
-poetry install
+pip install -e .
+# to contribute, also install testing
+pip install -e ".[testing]"
 ```
 
 ## Usage
@@ -32,19 +42,4 @@ Also, note that only the keys mentioned will be included if you provide the mapp
 >>> mapping = {"name": "region", "folder": "building_type"}
 >>> parser = KMLParser(input_path, mapping=mapping)
 >>> data = parser.parse()
-```
-
-## Development
-
-To contribute to this tool, first checkout the code. Then create a new virtual environment:
-```console
-cd kmlparser
-python -m venv env
-source env/bin/activate
-```
-
-Now install the dependencies:
-
-```console
-pip install -e ".[testing]"
 ```
