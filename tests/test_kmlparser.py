@@ -9,30 +9,38 @@ from kmlparser import KMLParser
 @pytest.fixture
 def kml_file():
     content = """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <kml xmlns="http://www.opengis.net/kml/2.2">
-            <Document>
-                <name>Sample KML</name>
-                <Folder>
-                    <name>Folder1</name>
-                    <Placemark>
-                        <name>Place1</name>
-                        <address>Address1</address>
-                        <description>Description1</description>
-                    </Placemark>
-                </Folder>
-                <Folder>
-                    <name>Folder2</name>
-                    <Placemark>
-                        <name>Place2</name>
-                        <description>Description2</description>
-                        <Point>
-                            <coordinates>-122.08198699999999,37.422362,0</coordinates>
-                        </Point>
-                    </Placemark>
-                </Folder>
-            </Document>
-        </kml>
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+    <Document>
+        <name>Sample KML</name>
+        <Folder>
+            <name>Folder1</name>
+            <Placemark>
+                <name>Place1</name>
+                <address>Address1</address>
+                <description><![CDATA[field1: value1 <br>field2: value2]]></description>
+                <ExtendedData>
+                    <Data name="field1">
+                        <value>value1</value>
+                    </Data>
+                    <Data name="field2">
+                        <value>value2</value>
+                    </Data>
+                </ExtendedData>
+            </Placemark>
+        </Folder>
+        <Folder>
+            <name>Folder2</name>
+            <Placemark>
+                <name>Place2</name>
+                <description>Description2</description>
+                <Point>
+                    <coordinates>-122.08198699999999,37.422362,0</coordinates>
+                </Point>
+            </Placemark>
+        </Folder>
+    </Document>
+</kml>
     """
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as tmp_file:
         tmp_file.write(content)
@@ -51,8 +59,9 @@ def test_kml_parser_parse(kml_file):
     item1 = parsed_data[0]
     assert item1["name"] == "Place1"
     assert item1["address"] == "Address1"
-    assert item1["description"] == "Description1"
+    assert item1["description"] == "field1: value1 <br>field2: value2"
     assert item1["folder"] == "Folder1"
+    assert item1["extended_data"] == {"field1": "value1", "field2": "value2"}
 
     item2 = parsed_data[1]
     assert item2["name"] == "Place2"

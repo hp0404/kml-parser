@@ -22,33 +22,32 @@ class KMLParser:
         return _data
 
     def _parse_placemark(self, placemark: bs4.element.Tag):
+        response = {}
         coords = placemark.find("coordinates")
         if coords is not None:
-            x = coords.text.split(",")[0].strip("\n").strip()
-            y = coords.text.split(",")[1].strip("\n").strip()
-        else:
-            x, y = None, None
+            response["x"] = coords.text.split(",")[0].strip("\n").strip()
+            response["y"] = coords.text.split(",")[1].strip("\n").strip()
 
         description = placemark.find("description")
         if description is not None:
-            description = description.text
+            response["description"] = description.text
 
         address = placemark.find("address")
         if address is not None:
-            address = address.text
+            response["address"] = address.text
 
         name = placemark.find("name")
         if name is not None:
-            name = name.text
+            response["name"] = name.text
 
-        raw_response = {
-            "name": name,
-            "address": address,
-            "description": description,
-            "x": x,
-            "y": y,
-        }
-        return self._rename_fields(raw_response)
+        extended_data = placemark.find("ExtendedData")
+        if extended_data is not None:
+            metadata = {}
+            for item in extended_data.find_all("Data"):
+                metadata[item["name"]] = item.find("value").text.strip()
+            response["extended_data"] = metadata
+
+        return response
 
     def parse(self) -> typing.List[typing.Dict[str, typing.Any]]:
         data = []
@@ -57,9 +56,6 @@ class KMLParser:
                 raise KeyError("Folder key is missing.")
             for placemark in folder.find_all("Placemark"):
                 item = self._parse_placemark(placemark)
-                folder_tag = (
-                    self.mapping["folder"] if self.mapping is not None else "folder"
-                )
-                item[folder_tag] = folder.find("name").text
-                data.append(item)
+                item["folder"] = folder.find("name").text
+                data.append(self._rename_fields(item))
         return data

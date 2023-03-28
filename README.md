@@ -13,7 +13,7 @@ source env/bin/activate
 
 Now install the dependencies:
 
-```console
+```
 pip install -e .
 # to contribute, also install testing
 pip install -e ".[testing]"
