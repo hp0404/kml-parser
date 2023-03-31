@@ -6,11 +6,21 @@ import bs4
 
 class KMLParser:
     def __init__(
-        self, file_path: Path, mapping: typing.Optional[typing.Dict[str, str]] = None
+        self,
+        document: typing.Union[Path, str],
+        mapping: typing.Optional[typing.Dict[str, str]] = None,
     ) -> None:
-        with file_path.open("r") as f:
-            self.soup = bs4.BeautifulSoup(f, "lxml-xml")
+        self.soup = self._parse_document(document)
         self.mapping = mapping
+
+    @staticmethod
+    def _parse_document(document: typing.Union[Path, str]) -> bs4.BeautifulSoup:
+        if isinstance(document, Path):
+            with document.open("r") as f:
+                contents = f.read()
+        else:
+            contents = document
+        return bs4.BeautifulSoup(contents, "lxml-xml")
 
     def _rename_fields(self, response: typing.Dict[str, str]) -> typing.Dict[str, str]:
         if self.mapping is None:
