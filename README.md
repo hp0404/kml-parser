@@ -1,6 +1,6 @@
 # kml-parser
 
-A library for parsing KML files.
+A library for parsing KML files with BeautifulSoup. It's much simpler than `fastkml` and parses documents for you.
 
 ## Installation
 
