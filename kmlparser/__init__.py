@@ -51,11 +51,15 @@ class KMLParser:
 
     def parse(self) -> typing.List[typing.Dict[str, typing.Any]]:
         data = []
+        # assuming there are Folder attrs in the document
         for folder in self.soup.find_all("Folder"):
-            if folder is None:
-                raise KeyError("Folder key is missing.")
             for placemark in folder.find_all("Placemark"):
                 item = self._parse_placemark(placemark)
                 item["folder"] = folder.find("name").text
+                data.append(self._rename_fields(item))
+        # assuming there's no Folder attributes
+        if not data:
+            for placemark in self.soup.find_all("Placemark"):
+                item = self._parse_placemark(placemark)
                 data.append(self._rename_fields(item))
         return data
