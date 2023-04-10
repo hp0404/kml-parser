@@ -15,21 +15,13 @@ class KMLParser:
 
     @staticmethod
     def _parse_document(document: typing.Union[Path, str]) -> bs4.BeautifulSoup:
-        if isinstance(document, Path):
-            with document.open("r") as f:
-                contents = f.read()
-        else:
-            contents = document
+        contents = document.read_text() if isinstance(document, Path) else document
         return bs4.BeautifulSoup(contents, "lxml-xml")
 
     def _rename_fields(self, response: typing.Dict[str, str]) -> typing.Dict[str, str]:
         if self.mapping is None:
             return response
-        _data = {}
-        for k, v in response.items():
-            if k in self.mapping:
-                _data[self.mapping[k]] = v
-        return _data
+        return {self.mapping[k]: v for k, v in response.items() if k in self.mapping}
 
     def _parse_placemark(self, placemark: bs4.element.Tag):
         response = {}
