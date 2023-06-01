@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import typing
 from pathlib import Path
+
 import bs4
 
 
